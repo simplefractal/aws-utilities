@@ -8,7 +8,7 @@ custom: ${file(../../templates/base_python.yml):custom}
 
 functions:
   new_function:
-    handler: handler.new_function
+    handler: handler.new_function_handler
     package:
       include:
         - new_function/**
