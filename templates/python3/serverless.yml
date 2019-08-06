@@ -1,0 +1,17 @@
+# Select all instances of 'new_function,' and name your function!
+service: new_function
+
+provider: ${file(../../templates/base_python.yml):provider}
+plugins: ${file(../../templates/base_python.yml):plugins}
+package: ${file(../../templates/base_python.yml):package}
+custom: ${file(../../templates/base_python.yml):custom}
+
+functions:
+  new_function:
+    handler: handler.new_function
+    package:
+      include:
+        - new_function/**
+        # - ../../common/s3_utils.py # include any imported utilities
+    # environment:
+      # VARIABLE: ${env:${opt:stage, 'dev'}_VARIABLE} # this syntax sources dev_VARIABLE or prod_VARIABLE from your postactivate depending on --stage option
