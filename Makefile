@@ -4,7 +4,7 @@
 
 python:
 ifdef name
-	serverless create --template-path templates/python3 --path functions/$(name)
+	serverless create --template-path templates/python3 --path services/$(name)
 else
-	serverless create --template-path templates/python3 --path functions/new_function
+	serverless create --template-path templates/python3 --path services/new_function
 endif

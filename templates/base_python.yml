@@ -2,9 +2,7 @@
 provider:
   name: aws
   runtime: python3.6
-  role: ${env:${opt:stage, 'dev'}_LAMBDA_ROLE}   # IAM role used by function (granting it a permission set)
-  memorySize: 2048 # Raise or lower within function yml as needed
-  timeout: 300 # In seconds. Max 900
+  role: ${env:${opt:stage, 'dev'}_LAMBDA_ROLE} # IAM role used by function (granting it a permission set)
   vpc: # https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html
     securityGroupIds:
       - ${env:VPC_SECURITY_GROUP}
@@ -21,7 +19,7 @@ package:
 
 custom:
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: non-linux # cross compiling option for serverless-python-requirements plugin
   enabled:
     dev: false
     prod: true
