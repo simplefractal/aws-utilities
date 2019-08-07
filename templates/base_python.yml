@@ -9,17 +9,7 @@ provider:
     subnetIds:
       - ${env:VPC_SUBNET_ID}
 
-plugins:
-  - serverless-python-requirements   # Bundles dependencies from requirements.txt when deploying
-
-package:
-  individually: true
-  exclude: # You will need to include necessary files from your service's YAML
-    - "./**"
-
 custom:
-  pythonRequirements:
-    dockerizePip: non-linux # cross compiling option for serverless-python-requirements plugin
   enabled:
     dev: false
     prod: true

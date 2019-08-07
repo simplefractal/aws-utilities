@@ -16,12 +16,23 @@ provider:
   runtime: python3.6
   role: ${file(../../templates/base_python.yml):provider.role}
   vpc: ${file(../../templates/base_python.yml):provider.vpc}
-  
-plugins: ${file(../../templates/base_python.yml):plugins}
-package: ${file(../../templates/base_python.yml):package}
 
-custom: # create or load in additional custom blocks as necessary.
-  pythonRequirements: ${file(../../templates/base_python.yml):custom.pythonRequirements}
+# Plugins cannot be replaced by variables. These run BEFORE variable substitution.
+plugins:
+  - serverless-package-external # Bundles local dependencies outside serverless root (e.g. common directory)
+  - serverless-python-requirements # Bundles dependencies from requirements.txt when deploying
+
+package:
+  individually: true
+  exclude: # If you use common/ files, explicitly include the subfolders below, per function
+    - 'common/**'
+
+custom:
+  packageExternal: # directories included by serverless-package-external plugin
+    external:
+      - '../../common' # load an out-of-directory module
+  pythonRequirements:
+    dockerizePip: non-linux # cross compiling option for serverless-python-requirements plugin
   enabled: ${file(../../templates/base_python.yml):custom.enabled}
 
 # Before adding new functions, ask yourself:
@@ -33,9 +44,8 @@ functions:
     handler: handler.new_function_handler
     memorySize: 2048 # Raise or lower as necessary.
     timeout: 300 # In seconds. Max 900 
-    package:
-      include:
-        - service-folder-name/**
-        # - ../../common/s3_utils.py # include any imported utilities
+    # package:
+    #   include:
+    #     - 'common/s3_utils/**'
     # environment:
-      # VARIABLE: ${env:${opt:stage, 'dev'}_VARIABLE} # this syntax sources dev_VARIABLE or prod_VARIABLE from your postactivate depending on --stage option
+    #   VARIABLE: ${env:${opt:stage, 'dev'}_VARIABLE} # this syntax sources dev_VARIABLE or prod_VARIABLE from your postactivate depending on --stage option
