@@ -21,6 +21,7 @@ provider:
 plugins:
   - serverless-package-external # Bundles local dependencies outside serverless root (e.g. common directory)
   - serverless-python-requirements # Bundles dependencies from requirements.txt when deploying
+  - serverless-plugin-aws-alerts # Automatically creates Alarms on deploy
 
 package:
   individually: true
@@ -34,6 +35,20 @@ custom:
       - '../../common' # load an out-of-directory module
   pythonRequirements:
     dockerizePip: non-linux # cross compiling option for serverless-python-requirements plugin
+  alerts: # https://github.com/ACloudGuru/serverless-plugin-aws-alerts
+    stages:
+      - prod
+    nameTemplate: $[functionName]-$[metricName]-Alarm
+    topics:
+      alarm:
+        topic: arn:aws:sns:us-east-1:930510191294:ALP_all_error_monitoring
+    alarms:
+      - functionErrors # this is a default, with some overrides in below 'definitions'
+    definitions:
+      functionErrors:
+        period: 300
+        treatMissingData: notBreaching
+
   enabled: ${file(../../templates/base_python.yml):custom.enabled}
 
 # Before adding new functions, ask yourself:
@@ -41,7 +56,7 @@ custom:
 # Then break it out with `make python name=new_service_name`
 # If it is closely related to the functions below, go ahead and add it here.
 functions:
-  new_function:
+  new-function:
     handler: handler.new_function_handler
     memorySize: 2048 # Raise or lower as necessary.
     timeout: 300 # In seconds. Max 900 

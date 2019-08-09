@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
+    "serverless-package-external": "^1.1.1",
+    "serverless-plugin-aws-alerts": "^1.4.0",
     "serverless-python-requirements": "^4.2.5"
   }
 }
