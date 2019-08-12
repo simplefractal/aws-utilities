@@ -10,6 +10,7 @@ def do_s3_stuff():
     s3_resource = boto3.resource('s3')
     print(s3_resource)
     print('done doing s3 stuff')
+    return "did stuff"
 
 
 def upload_df_to_s3(df, file_name, with_index=False):
