@@ -5,9 +5,5 @@ steps:
 - name: test
   image: python:3.6
   commands:
-  - python -v
-  - python3 -v
-  - pip -v
-  - pip3 -v
-  - pip3 install pytest
+  - pip3 install -r master_requirements.txt
   - pytest
