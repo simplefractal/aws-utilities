@@ -1,0 +1,65 @@
+# Setup:
+#   1. Name your service. This will prefix all functions
+#      service: alp-bot will produce functions named
+#        alp-bot-dev-charge-cards
+#        alp-bot-prod-send-report
+#   2. Update your folder name and package:include to match #1
+#   3. Give your first function (and its handler) a name!
+#   4. Rename new_function.py  
+#   5. Type `serverless print` to check your final serverless.yml output
+
+# hyphens are the only allowed special character
+service: service-folder-name
+
+provider:
+  name: aws
+  runtime: node
+  role: ${file(../../templates/base_python.yml):provider.role}
+  vpc: ${file(../../templates/base_python.yml):provider.vpc}
+
+# Plugins cannot be replaced by variables. These run BEFORE variable substitution.
+plugins:
+  - serverless-webpack
+  - serverless-plugin-aws-alerts # Automatically creates Alarms on deploy
+
+package:
+  individually: true
+  exclude: # If you use common/ files, explicitly include the subfolders below, per function
+    - 'common/**'
+    - '*.js'
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules: false # Exclude node modules when packaging
+    packager: 'npm'
+  alerts: # https://github.com/ACloudGuru/serverless-plugin-aws-alerts
+    stages:
+      - prod
+    nameTemplate: $[functionName]-$[metricName]-Alarm
+    topics:
+      alarm:
+        topic: arn:aws:sns:us-east-1:930510191294:ALP_all_error_monitoring
+    alarms:
+      - functionErrors # this is a default, with some overrides in below 'definitions'
+    definitions:
+      functionErrors:
+        period: 300
+        treatMissingData: notBreaching
+
+  enabled: ${file(../../templates/base_python.yml):custom.enabled}
+
+# Before adding new functions, ask yourself:
+# Is this function a reusable service?
+# Then break it out with `make python name=new_service_name`
+# If it is closely related to the functions below, go ahead and add it here.
+functions:
+  new-function:
+    handler: handler.new_function_handler
+    memorySize: 2048 # 1600+ recommended for puppeteer functions
+    timeout: 900 # In seconds. Max 900
+    package:
+      include:
+        - ../../common/puppeteer_utils/**
+    # environment:
+    #   VARIABLE: ${env:${opt:stage, 'dev'}_VARIABLE} # this syntax sources dev_VARIABLE or prod_VARIABLE from your postactivate depending on --stage option

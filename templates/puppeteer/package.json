@@ -1,0 +1,13 @@
+{
+  "name": "new_function",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "chrome-aws-lambda": "^1.19.0",
+    "puppeteer": "^1.19.0",
+    "serverless-plugin-aws-alerts": "^1.4.0",
+    "serverless-webpack": "^5.3.1",
+    "webpack": "^4.39.2"
+  }
+}
